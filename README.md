@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 **Status:** Maintenance (expect bug fixes and minor updates)
 
 <img src="data/logo.jpg" width=25% align="right" /> [![Build status](https://travis-ci.org/openai/baselines.svg?branch=master)](https://travis-ci.org/openai/baselines)
@@ -161,3 +162,6 @@ To cite this repository in publications:
       howpublished = {\url{https://github.com/openai/baselines}},
     }
 
+=======
+# mirrored_drl
+>>>>>>> 2e29f0ceebf45656499b056c59895e7d6010e1f2
