@@ -62,7 +62,23 @@ class CategoricalPdType(PdType):
     def pdclass(self):
         return CategoricalPd
     def pdfromlatent(self, latent_vector, init_scale=1.0, init_bias=0.0):
-        pdparam = _matching_fc(latent_vector, 'pi', self.ncat, init_scale=init_scale, init_bias=init_bias)
+        pdparam0 = _matching_fc(latent_vector[0], 'pi', self.ncat, init_scale=init_scale, init_bias=init_bias)
+        pdparam1 = _matching_fc(latent_vector[1], 'pi', self.ncat, init_scale=init_scale, init_bias=init_bias)
+        pdparam2 = _matching_fc(latent_vector[2], 'pi', self.ncat, init_scale=init_scale, init_bias=init_bias)
+        pdparam3 = _matching_fc(latent_vector[3], 'pi', self.ncat, init_scale=init_scale, init_bias=init_bias)
+        pdparam=pdparam0
+        updates = tf.constant([ [1, 0, 0, 0,0,0],
+                                [0, 1, 0, 0,0,0],
+                                [0, 0, 0, 1,0,0],
+                                [0, 0, 1, 0,0,0],
+                                [0, 0, 0, 0,0,1],
+                                [0, 0, 0, 0,1,0]])
+        updates=tf.to_float(updates)
+        pdparam=tf.add(pdparam,pdparam1)
+        pdparam=tf.add(pdparam,tf.matmul(pdparam2,updates))
+        pdparam=tf.add(pdparam,tf.matmul(pdparam3,updates))
+        print(pdparam.shape)
+        pdparam=tf.divide(pdparam,4)
         return self.pdfromflat(pdparam), pdparam
 
     def param_shape(self):

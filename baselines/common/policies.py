@@ -40,8 +40,9 @@ class PolicyWithValue(object):
 
         vf_latent = vf_latent if vf_latent is not None else latent
 
-        vf_latent = tf.layers.flatten(vf_latent)
-        latent = tf.layers.flatten(latent)
+        vf_latent = tf.layers.flatten(vf_latent[0])
+        for i in range(4):
+        	latent[i] = tf.layers.flatten(latent[i])
 
         # Based on the action space, will select what probability distribution type
         self.pdtype = make_pdtype(env.action_space)
@@ -138,8 +139,12 @@ def build_policy(env, policy_network, value_network=None,  normalize_observation
 
         encoded_x = encode_observation(ob_space, encoded_x)
 
+        policy_latent=[]
         with tf.variable_scope('pi', reuse=tf.AUTO_REUSE):
-            policy_latent = policy_network(encoded_x)
+            policy_latent.append(policy_network(encoded_x))
+            policy_latent.append(policy_network(tf.reverse(encoded_x,axis=[2])))
+            policy_latent.append(policy_network(tf.reverse(encoded_x,axis=[3])))
+            policy_latent.append(policy_network(tf.reverse(tf.reverse(encoded_x, axis=[3]),axis=[2])))
             if isinstance(policy_latent, tuple):
                 policy_latent, recurrent_tensors = policy_latent
 
